@@ -67,9 +67,7 @@ etc.
 - Fatality rates varied, but trended downward globally.
 - **India, USA, Brazil** frequently appear among top 5 countries by new cases.
 
-### ✍️ Author
 
-Osas Elizabeth Aigbekaen — [GitHub](https://github.com/osasliz)
 
 
 
