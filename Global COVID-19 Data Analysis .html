@@ -33,3 +33,72 @@ plt.ylabel('Total Cases')
 plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
+
+# Create 7-day rolling average of new cases for each continent
+continent_df['new_cases_7day_avg'] = continent_df.groupby('continent')['new_cases'].transform(lambda x: x.rolling(7).mean())
+
+# Plot it
+plt.figure(figsize=(14, 6))
+sns.lineplot(data=continent_df, x='date', y='new_cases_7day_avg', hue='continent')
+plt.title('7-Day Rolling Average of New COVID-19 Cases by Continent')
+plt.xlabel('Date')
+plt.ylabel('New Cases (7-day avg)')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# To calculate and visualize case fatality rate over time
+continent_df['fatality_rate'] = continent_df['total_deaths'] / continent_df['total_cases']
+continent_df['fatality_rate'] = continent_df['fatality_rate'].fillna(0)
+
+# Plot fatality rate
+plt.figure(figsize=(14, 6))
+sns.lineplot(data=continent_df, x='date', y='fatality_rate', hue='continent')
+plt.title('COVID-19 Case Fatality Rate by Continent Over Time')
+plt.xlabel('Date')
+plt.ylabel('Fatality Rate')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Total Cases per Continent by Month
+# Add a 'month' column
+continent_df['month'] = continent_df['date'].dt.to_period('M').astype(str)
+
+# Group by continent and month
+monthly = continent_df.groupby(['continent', 'month'])['total_cases'].max().unstack().fillna(0)
+
+# Plot heatmap
+plt.figure(figsize=(14, 5))
+sns.heatmap(monthly, cmap='YlOrRd', linewidths=0.5)
+plt.title('Total COVID-19 Cases by Continent and Month')
+plt.xlabel('Month')
+plt.ylabel('Continent')
+plt.tight_layout()
+plt.show()
+
+# Top 5 countries with highest new cases (Latest dates)
+# Load original dataframe again with country-level info
+df = pd.read_csv('https://covid.ourworldindata.org/data/owid-covid-data.csv')
+df['date'] = pd.to_datetime(df['date'])
+
+# Filter to latest date
+latest_date = df['date'].max()
+latest_df = df[df['date'] == latest_date]
+
+# Get top 5 countries with most new cases
+top5 = latest_df[['location', 'new_cases']].sort_values(by='new_cases', ascending=False).head(5)
+
+# Bar plot
+plt.figure(figsize=(8, 5))
+sns.barplot(data=top5, x='new_cases', y='location', palette='Reds_r')
+plt.title(f'Top 5 Countries by New COVID-19 Cases on {latest_date.date()}')
+plt.xlabel('New Cases')
+plt.ylabel('Country')
+plt.tight_layout()
+plt.show()
+```
+
+
+
+
